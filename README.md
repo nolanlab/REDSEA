@@ -213,7 +213,7 @@ disp(['elapsed time: ',num2str(t)]);
 </p>
 </details>
 
-##REDSEA
+## REDSEA
 
 <details><summary>See MibiExtractSingleCellDataFromSegmentationAndTiff_REDSEA.m Script</summary>
 <p>
