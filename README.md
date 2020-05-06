@@ -30,6 +30,11 @@ This method requires you to provide a cell segmentation mask. A cell nuclei prob
 
 After producing a nuclei probablity mask, we will then use the script [MibiSegmentByDeepProbWithPerim3.m]() to implement a watershed algorithm for whole cell segmentation.
 
+<details><summary>See Script</summary>
+<p>
+
+#### yes, even hidden code blocks!
+
 ```MATLAB
 %% Pipeline for nuclear segmentation using pixel probabilities from deepCell
 % Changed the pipeline to use the boundaries from the deepcell as boudaries
@@ -39,9 +44,9 @@ t1 = clock;
 % maxs = imextendedmax(probNuc,0.015);
 % probNuc>0.05
 
-path = 'TIFF/dsDNA.tiff';
+path = 'inputs/dsDNA.tiff';
 %path = '1FOV/Histone H3.tiff';
-resultsPath = 'segmentated_DNA_resize_back';
+resultsPath = 'watershed_result';
 %resultsPath = 'segmentated_H3_1FOV_resize_back';
 %deepPath = 'deepcell_1FOV';
 deepPath = 'deepcell';
@@ -72,8 +77,8 @@ for p=1:1
     rgb_image = MibiGetRGBimageFromMat(nucIm,maxv);
 
     % %% Get maxima from deep learning probabilities
-    % read nuclear segmentation from Ilastik
-    probNuc = double(imread([deepPath,'/feature_1_frame_1_0404_DNA_upsample_back.tif']));
+    % read nuclear segmentation from Ilastik/deepcell
+    probNuc = double(imread([deepPath,'/nuclei-probability-matrix.tif']));
     figure;
     imagesc(probNuc);
 
@@ -197,3 +202,7 @@ t = etime(t2,t1);
 disp(['elapsed time: ',num2str(t)]);
 
 ```
+
+</p>
+</details>
+
