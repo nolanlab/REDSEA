@@ -33,7 +33,7 @@ After producing a nuclei probablity mask, we will then use the script [MibiSegme
 <details><summary>See Script</summary>
 <p>
 
-#### yes, even hidden code blocks!
+
 
 ```MATLAB
 %% Pipeline for nuclear segmentation using pixel probabilities from deepCell
