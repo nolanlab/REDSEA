@@ -22,7 +22,7 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
 
 
 ### MATLAB scripts
-The MATLAB scripts include the REDSEA algorithm, along with other scripts created by [Leeat Keren](https://github.com/lkeren/MIBIAnalysis) for processing multiplexed images.
+The [MATLAB scripts](https://github.com/BokaiZhu/REDSEA/tree/master/code) include the REDSEA algorithm, along with other scripts created by [Leeat Keren](https://github.com/lkeren/MIBIAnalysis) for processing multiplexed images.
 
 ### tiff images and channel information
 There should be a CSV file containing the channel name information.
