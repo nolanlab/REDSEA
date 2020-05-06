@@ -8,7 +8,7 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
 ## Table of content
 
 - [Required Inputs](#required-inputs)
-    - [MARLAB scripts](#matlab-scripts)
+    - [MATLAB scripts](#matlab-scripts)
     - [tiff images and channel information](#tiff-images-and-channel-information)
     - [Segmentation Mask](#segmentation-mask)
 
@@ -22,15 +22,21 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
 
 
 
-### MARLAB scripts
+### MATLAB scripts
+The MATLAB scripts include the REDSEA algorithm, along with other scripts created by [Leeat Keren](https://github.com/lkeren/MIBIAnalysis).
+
 ### tiff images and channel information
 
 ### Segmentation Mask
 This method requires you to provide a cell segmentation mask. A cell nuclei probability matrix can be produced by your own chose (popular options include [ilastik](https://www.ilastik.org/) or [deepcell](https://github.com/vanvalenlab/deepcell-tf)). In our case we implemented a trained-in-house deepcell CNN model.
 
-After producing a nuclei probablity mask, we will then use the script [MibiSegmentByDeepProbWithPerim3.m]() to implement a watershed algorithm for whole cell segmentation.
+<p align="left"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/probability_matrix.png"></p>
 
-<details><summary>See Script</summary>
+After producing a nuclei probablity mask, we will then use the script ```MibiSegmentByDeepProbWithPerim3.m``` to implement a watershed algorithm for whole cell segmentation. This will produce something like this:
+
+<p align="left"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/watershed-result.png"></p>
+
+<details><summary>See MibiSegmentByDeepProbWithPerim3.m Script</summary>
 <p>
 
 
