@@ -227,7 +227,7 @@ There are **two methods** for boundary compensation in REDSEA: ```Sudoku``` and 
 <p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/method_show.png"></p>
 
 Also, you need to supply a list of channel names to perform the compensation process: normally you should only compensate for the **surface markers**, like in our case:
-```'CD16';'CD209 (DC-SIGN)';'CD4';'CD11c';'CD56';'CD39';'CD21 (CR2)';'PD-1';'CCR7';'CD163';'CD68';'CD8';'CD3';'CD45-RA';'CD86';'CTLA-4';'CD20';'MPO';'HLA-DR';'CD169 (Sialoadhesin)';'CD8a';'CD11b';'CD36';'Digoxigenin (DIG)';'CD25';'CD45'```
+```'CD16';'CD209 (DC-SIGN)';'CD4';'CD11c';'CD56';'CD39';'CD21 (CR2)';'PD-1';'CCR7';'CD163';'CD68';'CD8';'CD3';'CD45-RA';'CD86';'CTLA-4';'CD20';'MPO';'HLA-DR';'CD169 (Sialoadhesin)';'CD8a';'CD11b';'CD36';'CD25';'CD45'```
 
 Take a look at the annotated code in the block under:
 
