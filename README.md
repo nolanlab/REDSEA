@@ -1,6 +1,6 @@
 
 
-<p align="left"><img width=20%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/redsea.jpg"></p>
+<p align="left"><img width=100%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/redsea.jpg"></p>
 
 # REDSEA
 We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDSEA) as a solution for spillover compensation without loss of signal. This is the step-by-step guidance of how to use REDSEA to produced a FCS file with comepensated channel information.
