@@ -229,22 +229,7 @@ There are **two methods** for boundary compensation in REDSEA: ```Sudoku``` and 
 Also, you need to supply a list of channel names to perform the compensation process: normally you should only compensate for the **surface markers**, like in our case:
 ```'CD16';'CD209 (DC-SIGN)';'CD4';'CD11c';'CD56';'CD39';'CD21 (CR2)';'PD-1';'CCR7';'CD163';'CD68';'CD8';'CD3';'CD45-RA';'CD86';'CTLA-4';'CD20';'MPO';'HLA-DR';'CD169 (Sialoadhesin)';'CD8a';'CD11b';'CD36';'Digoxigenin (DIG)';'CD25';'CD45'```
 
-
-### Ouput
-
-REDSEA will produce the 4 FCS files for downstream analysis:
-
-```dataFCS.fcs``` = raw counts for each single cell without compensation
-
-```dataRedSeaFCS``` = raw counts for each single cell with REDSEA compensation
-
-```dataScaleSizeFCS.fcs``` = counts for each single cell as scaled by cell size (counts/cellSize) without compensation
-
-```dataRedSeaScaleSizeFCS.fcs``` = counts for each single cell as scaled by cell size (counts/cellSize) with REDSEA compensation
-
-It is recommended to use the ```dataRedSeaScaleSizeFCS.fcs``` file.
-
-<p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/fcs_result.png"></p>
+Take a look at the annotated code in the block under:
 
 <details><summary>See MibiExtractSingleCellDataFromSegmentationAndTiff_REDSEA.m Script</summary>
 <p>
@@ -263,14 +248,14 @@ It is recommended to use the ```dataRedSeaScaleSizeFCS.fcs``` file.
 
 % This is a csv file for your channels within
 massDS = MibiReadMassData('example_channel_inforamtion.csv');
-path = 'Inputs/'; % This assumes the path points to a folder 
+path = 'Inputs'; % This assumes the path points to a folder 
 % containing all the Points from the run. Your segmentationParams.mat from 
 % each point should be in the each Point's folder
 % There should be a segmentation.mat in the same folder containing the
 % segmentation of the image.
 
 % This is where the FCS file output will go to
-pathSegment = 'FCS_Tiled_Flat/';
+pathSegment = 'result/';
 
 % Select the channels that are expected to be expressed. Cells with minimal
 % expression of at least one of these channels will be removed
@@ -298,7 +283,7 @@ end
 %%
 mkdir(pathSegment);
 
-for p=2:2
+for p=1:1
     disp(['point',num2str(p)]);
     pointNumber=p;
     % Load tiffs to recreate countsNoNoise
@@ -310,8 +295,7 @@ for p=2:2
     end
         
     % Load segmentation file
-%     load([path,'/Point',num2str(pointNumber),'/segmentationParams.mat']);
-    load([path, '/Point', num2str(pointNumber), '/segmentationParams.mat']);
+    load([path, '/Point', num2str(pointNumber), '/watershed_result/Point1_0.01_0.35/segmentationParams.mat']);
     labelNum = max(max(newLmod));
     channelNum = length(massDS);
     stats = regionprops(newLmod,'Area','PixelIdxList'); % Stats on cell size. Region props is DF with cell location by count
@@ -409,10 +393,27 @@ for p=2:2
 %     writeFCS([resultsDir,'/dataScaleSizeTransStdFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeTransStdL,TEXT);
     
 end
-
 ```
 
 </p>
 </details>
+
+
+
+### Ouput
+
+REDSEA will produce the 4 FCS files for downstream analysis:
+
+```dataFCS.fcs``` = raw counts for each single cell without compensation
+
+```dataRedSeaFCS``` = raw counts for each single cell with REDSEA compensation
+
+```dataScaleSizeFCS.fcs``` = counts for each single cell as scaled by cell size (counts/cellSize) without compensation
+
+```dataRedSeaScaleSizeFCS.fcs``` = counts for each single cell as scaled by cell size (counts/cellSize) with REDSEA compensation
+
+It is recommended to use the ```dataRedSeaScaleSizeFCS.fcs``` file. We can see by using REDSEA compensation, the boundary signal spillover is dynamically eliminated and reinforced.
+
+<p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/fcs_result.png"></p>
 
 
