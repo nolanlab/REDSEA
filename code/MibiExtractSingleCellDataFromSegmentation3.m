@@ -3,11 +3,11 @@
 % I use regionprops to speed up. Gives same results as version2, but much
 % faster!
 
-massDS = MibiReadMassData(['Panel16_DNAscope_2020-01-30_NewEstesTissue_matlab.csv']);
+massDS = MibiReadMassData(['original.csv']);
 %path = '1FOV/';
 %pathSegment = '1FOV';
-path = 'test_tiff/';
-pathSegment = 'test_tiff';
+path = 'Inputs/Point1/';
+pathSegment = 'Inputs';
 resultsDir = [path,'dataPerCell'];
 mkdir(resultsDir);
 clusterChannels = {'C';'Na';'P';'S';'Fe';'dsDNA';'Vimentin';'Histone H3';'CD16';'SMA';'CD209 (DC-SIGN)';'NFkB-p100 (pS865)';'CD4';'CD11c';'CD56';'FoxP3';'CD39';'Granzyme B';'Biotin';'CD21 (CR2)';'Ki-67';'PD-1';'Pax-5';'CCR7';'CD163';'CD68';'FoxO1';'CD8';'CD3';'CD45-RA';'Dinitrophenyl (DNP)';'CD86';'CTLA-4';'CD20';'Lamin AC';'MPO';'HLA-DR';'IL10';'CD169 (Sialoadhesin)';'CD8a';'Pan-Keratin';'CD11b';'CD36';'Digoxigenin (DIG)';'CD25';'CD45';'Ta';'Au'};

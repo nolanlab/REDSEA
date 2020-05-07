@@ -9,14 +9,14 @@
 
 % This is a csv file for your channels within
 massDS = MibiReadMassData('example_channel_inforamtion.csv');
-path = 'Inputs/'; % This assumes the path points to a folder 
+path = 'Inputs'; % This assumes the path points to a folder 
 % containing all the Points from the run. Your segmentationParams.mat from 
 % each point should be in the each Point's folder
 % There should be a segmentation.mat in the same folder containing the
 % segmentation of the image.
 
 % This is where the FCS file output will go to
-pathSegment = 'FCS_Tiled_Flat/';
+pathSegment = 'result/';
 
 % Select the channels that are expected to be expressed. Cells with minimal
 % expression of at least one of these channels will be removed
@@ -44,7 +44,7 @@ end
 %%
 mkdir(pathSegment);
 
-for p=2:2
+for p=1:1
     disp(['point',num2str(p)]);
     pointNumber=p;
     % Load tiffs to recreate countsNoNoise
@@ -56,8 +56,7 @@ for p=2:2
     end
         
     % Load segmentation file
-%     load([path,'/Point',num2str(pointNumber),'/segmentationParams.mat']);
-    load([path, '/Point', num2str(pointNumber), '/segmentationParams.mat']);
+    load([path, '/Point', num2str(pointNumber), '/watershed_result/Point1_0.01_0.35/segmentationParams.mat']);
     labelNum = max(max(newLmod));
     channelNum = length(massDS);
     stats = regionprops(newLmod,'Area','PixelIdxList'); % Stats on cell size. Region props is DF with cell location by count
