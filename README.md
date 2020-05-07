@@ -16,7 +16,8 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
     - [Segmentation Mask](#segmentation-mask)
 
 - [REDSEA](#redsea)
-    
+    - [Parameters](#parameters)
+    - [Output](#output)
 
 ## Required Inputs
 
@@ -217,6 +218,8 @@ disp(['elapsed time: ',num2str(t)]);
 </details>
 
 ## REDSEA
+
+### Parameters
 With the .tiff images, .mat segmentation file and .csv channel information, we are now ready to implement REDSEA for boundary compensation.
 
 There are two methods for boundary compensation in REDSEA: ```Sudoku``` and ```Cross```. The algorithm walks through the boundaries of each cell, and decides the area to extract signal. You would need to choose one of the two methods and deside how many pixels to expand from the boundary pixel: 
@@ -226,6 +229,8 @@ There are two methods for boundary compensation in REDSEA: ```Sudoku``` and ```C
 Also, you need to supply a list of channel names to perform the compensation process: normally you should only compensate for the surface markers, like in our case:
 ```'CD16';'CD209 (DC-SIGN)';'CD4';'CD11c';'CD56';'CD39';'CD21 (CR2)';'PD-1';'CCR7';'CD163';'CD68';'CD8';'CD3';'CD45-RA';'CD86';'CTLA-4';'CD20';'MPO';'HLA-DR';'CD169 (Sialoadhesin)';'CD8a';'CD11b';'CD36';'Digoxigenin (DIG)';'CD25';'CD45'```
 
+
+### Ouput
 REDSEA will produce the FCS files for downstream analysis
 
 <p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/fcs_result.png"></p>
