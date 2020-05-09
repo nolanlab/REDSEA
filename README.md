@@ -33,13 +33,18 @@ There should be a CSV file containing the channel name information.
 And also a folder containing .tiff images for each channel, where the names should be same as in the CSV file.
 
 ### Segmentation Mask
-This method requires you to provide a cell segmentation mask. A cell nuclei probability matrix can be produced by your own chose (popular options include [ilastik](https://www.ilastik.org/) or [deepcell](https://github.com/vanvalenlab/deepcell-tf)). In our case we implemented a trained-in-house deepcell CNN model.
+This method requires you to provide a cell segmentation mask. A cell nuclei probability matrix can be produced by your own chose (popular options include [ilastik](https://www.ilastik.org/) or [deepcell](https://github.com/vanvalenlab/deepcell-tf)). In our case for the MIBI data we implemented a trained-in-house deepcell CNN model.
 
-<p align="left"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/probability_matrix.png"></p>
+<p align="center"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/probability_matrix.png"></p>
+
+DeepCell is also easy to implement on different imaging modalities. Here is a prediction model we trained with ~ 1500 cells in the [cycIF](https://www.nature.com/articles/s41597-019-0332-y) dataset:
+
+<p align="center"><img width=70%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF.png"></p>
+
 
 After producing a nuclei probablity mask, we will then use the script ```MibiSegmentByDeepProbWithPerim3.m``` to implement a watershed algorithm for whole cell segmentation. This will produce something like this:
 
-<p align="left"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/watershed-result.png"></p>
+<p align="center"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/watershed-result.png"></p>
 
 <details><summary>See MibiSegmentByDeepProbWithPerim3.m Script</summary>
 <p>
@@ -416,6 +421,10 @@ REDSEA will produce the 4 FCS files for downstream analysis:
 
 It is recommended to use the ```dataRedSeaScaleSizeFCS.fcs``` file. We can see by using REDSEA compensation, the boundary signal spillover is dynamically eliminated and reinforced.
 
+For the MIBI dataset:
 <p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/fcs_result.png"></p>
+
+And RESEA also works comparably on the cycIF data:
+<p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF_fcs.png"></p>
 
 
