@@ -7,6 +7,9 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
 
 <p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/overview.png"></p>
 
+### How it works
+
+In breif, the REDSEA algorithm identifies the boudary region for each cell based on the segmentation mask. Subsequently, for one cell's each channel, signals were subtracted based on the shared boundary with neighbooring cells ,and their corresponding signal.  Moreover, the removed signal from adjacent cells can be reinforced back to the cell by option. For detailed information look at the Material and Methods section of the [paper](www.facebook.com).
 
 ## Table of content
 
@@ -17,6 +20,7 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
 
 - [REDSEA](#redsea)
     - [Parameters](#parameters)
+    - [Sanity plots](#sanity-plots)
     - [Output](#output)
 
 ## Required Inputs
@@ -272,7 +276,7 @@ clusterChannels = massDS.Label(6:46); % exclude elemental channels
 % boundaryMod determines the type of compensation done for REDSEA.
 % elementShape. 1:Sudoku style, 2: Cross style
 % elementSize. How many pixels around the center to be considered for the
-% elementShape
+% elementShape, can be selected from 1-4.
 % As a default, keep elementShape and elementSize as 2.
 elementShape = 2;
 elementSize = 2;
@@ -286,6 +290,11 @@ channelNormIdentity = zeros(length(massDS.Label),1);
 for i = 1:length(normChannelsInds)
     channelNormIdentity(normChannelsInds(i)) = 1;
 end
+
+% Whether what to plot scatter to check the REDSEA result and effect,
+% default=0 for not, 1 for plotting.
+plotSanityPlots = 1;
+pathSanityPlots = strcat('result/sanityPlots/', 'Shape',num2str(elementShape), 'elementSize', num2str(elementSize), '/');
 
 %%
 mkdir(pathSegment);
@@ -302,6 +311,7 @@ for p=1:1
     end
         
     % Load segmentation file
+%     load([path,'/Point',num2str(pointNumber),'/segmentationParams.mat']);
     load([path, '/Point', num2str(pointNumber), '/watershed_result/Point1_0.01_0.35/segmentationParams.mat']);
     labelNum = max(max(newLmod));
     channelNum = length(massDS);
@@ -376,7 +386,11 @@ for p=1:1
 %    channelLabelsForFCS = ['cellLabelInImage';'cellSize';massDS.Label];
     channelLabelsForFCS = ['cellLabelInImage';'cellSize';massDS.Label;'PointNum'];
 
-    
+    %% plot sanity scatter images
+    if plotSanityPlots == 1
+        mkdir(pathSanityPlots);
+        MIBIboundary_compensation_plotting(dataScaleSizeCells,dataCompenScaleSizeCells,normChannels,normChannelsInds,pathSanityPlots);
+    end    
     
     %% save fcs
     TEXT.PnS = channelLabelsForFCS;
@@ -405,6 +419,9 @@ end
 </p>
 </details>
 
+### Sanity plots
+
+To visually inspect if the parameters discribed in the previous section are optimal for your data, we provided with a flag in the script ```plotSanityPlots = 1```. Once set to 1, it will produce the pairwise combination scatter plots of all the compensated channels. User can use these plots to evaluate if the compensation is optimal (for example looking at CD4-CD8, CD3-CD20 etc.) It is suggested to run this first will less channels, find the optimal parameters, then run the full list.  
 
 
 ### Output
