@@ -424,7 +424,7 @@ It is recommended to use the ```dataRedSeaScaleSizeFCS.fcs``` file. We can see b
 For the MIBI dataset:
 <p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/fcs_result.png"></p>
 
-And REDEA also works comparably on the cycIF data:
+And REDSEA also works comparably on the cycIF data:
 <p align="center"><img width=57%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF_fcs.png"></p>
 
 
