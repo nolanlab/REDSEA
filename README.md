@@ -48,7 +48,7 @@ DeepCell is also easy to implement on different imaging modalities. Here is a pr
 
 After producing a nuclei probablity mask, we will then use the script ```MibiSegmentByDeepProbWithPerim3.m``` to implement a watershed algorithm for whole cell segmentation. This will produce something like this:
 
-<p align="center"><img width=100%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/ws-segmentation2.png"></p>
+<p align="center"><img width=100%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/ws-segmentation3.png"></p>
 
 <details><summary>See MibiSegmentByDeepProbWithPerim3.m Script</summary>
 <p>
