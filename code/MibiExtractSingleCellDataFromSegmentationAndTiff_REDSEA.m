@@ -8,15 +8,13 @@
 % 4May2020 Yunhao Bai, Sizun Jiang
 
 % This is a csv file for your channels within
-massDS = MibiReadMassData('example_channel_inforamtion.csv');
-path = 'Inputs'; % This assumes the path points to a folder 
+massDS = dataset('File','Panel16_DNAscope_2020-01-30_NewEstesTissue_matlab.csv','Delimiter',',');
+path = 'Tiled_cropped_Flat'; % This assumes the path points to a folder 
 % containing all the Points from the run. Your segmentationParams.mat from 
 % each point should be in the each Point's folder
-% There should be a segmentation.mat in the same folder containing the
-% segmentation of the image.
 
 % This is where the FCS file output will go to
-pathSegment = 'result/';
+pathSegment = 'FCS_Tiled_Flat';
 
 % Select the channels that are expected to be expressed. Cells with minimal
 % expression of at least one of these channels will be removed
@@ -26,13 +24,13 @@ clusterChannels = massDS.Label(6:46); % exclude elemental channels
 % boundaryMod determines the type of compensation done for REDSEA.
 % elementShape. 1:Sudoku style, 2: Cross style
 % elementSize. How many pixels around the center to be considered for the
-% elementShape
+% elementShape, can be selected from 1-4.
 % As a default, keep elementShape and elementSize as 2.
-elementShape = 2;
-elementSize = 2;
+elementShape = 2; % range: 1 or 2
+elementSize = 2; % range: 1 - 4
 % Select channels for REDSEA compensation. Surface markers are recommended
-%boundary compensation codes
-%selected channels to do the boundary compensation
+% boundary compensation codes
+% selected channels to do the boundary compensation
 normChannels = {'CD16';'CD209 (DC-SIGN)';'CD4';'CD11c';'CD56';'CD39';'CD21 (CR2)';'PD-1';'CCR7';'CD163';'CD68';'CD8';'CD3';'CD45-RA';'CD86';'CTLA-4';'CD20';'MPO';'HLA-DR';'CD169 (Sialoadhesin)';'CD8a';'CD11b';'CD36';'Digoxigenin (DIG)';'CD25';'CD45'};
 [~, normChannelsInds] = ismember(normChannels,massDS.Label);
 channelNormIdentity = zeros(length(massDS.Label),1);
@@ -41,31 +39,34 @@ for i = 1:length(normChannelsInds)
     channelNormIdentity(normChannelsInds(i)) = 1;
 end
 
+% Whether what to plot scatter to check the REDSEA result and effect,
+% default=0 for not, 1 for plotting.
+% Note that if multiple channels selected (in normChannels), to plot out all
+% the sanity plots need long time.
+plotSanityPlots = 0;
+pathSanityPlots = ['sanityPlots/','Shape',num2str(elementShape),'elementSize',num2str(elementSize),'/'];
+
 %%
 mkdir(pathSegment);
 
 for p=1:1
     disp(['point',num2str(p)]);
     pointNumber=p;
-    % Load tiffs to recreate countsNoNoise
+    % load tiffs to recreate countsNoNoise
     for i=1:length(massDS.Label)
         t = imread([path, '/Point', num2str(pointNumber), '/', massDS.Label{i}, '.tiff']);
         d = double(t);
-    %     imshow(d)
+        % imshow(d)
         countsNoNoise(:,:,i) = d;
     end
         
-    % Load segmentation file
-    load([path, '/Point', num2str(pointNumber), '/watershed_result/Point1_0.01_0.35/segmentationParams.mat']);
+    % load segmentation file
+    load([path, '/Point', num2str(pointNumber), '/segmentationParams.mat']);
     labelNum = max(max(newLmod));
     channelNum = length(massDS);
     stats = regionprops(newLmod,'Area','PixelIdxList'); % Stats on cell size. Region props is DF with cell location by count
     countsReshape= reshape(countsNoNoise,size(countsNoNoise,1)*size(countsNoNoise,2),channelNum);
-%     % make a data matrix the size of the number of labels x the number of markers
-%     data = zeros(labelNum,channelNum);
-%     dataScaleSize = zeros(labelNum,channelNum);
-%     cellSizes = zeros(labelNum,1);
-
+    
     % make a data matrix the size of the number of labels x the number of markers
     % Include one more marker for cell size
     data = zeros(labelNum,channelNum);
@@ -74,9 +75,7 @@ for p=1:1
     
     % for each label extract information
     for i=1:labelNum
-        %
         currData = countsReshape(stats(i).PixelIdxList,:);
-        
         data(i,1:channelNum) = sum(currData,1);
         dataScaleSize(i,1:channelNum) = sum(currData,1) / stats(i).Area;
         cellSizes(i) = stats(i).Area;
@@ -84,23 +83,20 @@ for p=1:1
     
     %% do cell boundary compensation
     dataCompen = MIBIboundary_compensation_boundarySA(newLmod,data,countsNoNoise,channelNormIdentity,elementShape,elementSize);
-    
     dataCompenScaleSize = dataCompen./repmat(cellSizes,[1 channelNum]);
 
-%     %% Add point number 
-% %     pointnum = double(repmat(p, 1, length(data))); 
-%     pointnum = repelem(p, length(data),[1]);
-%     data = [data, pointnum];
-%     dataScaleSize = [dataScaleSize, pointnum];
-%     dataCompen = [dataCompen, pointnum];
-%     dataCompenScaleSize = [dataCompenScaleSize, pointnum];
-% 
-%     
-    %%
+    % %% Add point number 
+    % pointnum = double(repmat(p, 1, length(data))); 
+    % pointnum = repelem(p, length(data),[1]);
+    % data = [data, pointnum];
+    % dataScaleSize = [dataScaleSize, pointnum];
+    % dataCompen = [dataCompen, pointnum];
+    % dataCompenScaleSize = [dataCompenScaleSize, pointnum];
 
+    %%
     % get the final information only for the labels with 
     % 1.positive nuclear identity (cells)
-    % 2. That have enough information in the clustering channels to be
+    % 2.that have enough information in the clustering channels to be
     % clustered
     labelIdentityNew2 = labelIdentityNew([1:end-1]); % fix bug resulting from previous script
     sumDataScaleSizeInClusterChannels = sum(dataScaleSize(:,clusterChannelsInds),2);
@@ -110,8 +106,7 @@ for p=1:1
     dataScaleSizeCells = dataScaleSize(labelIdentityNew2==1,:);
     dataCompenCells = dataCompen(labelIdentityNew2==1,:);
     dataCompenScaleSizeCells = dataCompenScaleSize(labelIdentityNew2==1,:);
-        
-    
+
     labelVec=find(labelIdentityNew2==1);
     
     % get cell sizes only for cells
@@ -122,15 +117,19 @@ for p=1:1
     dataCompenL = [labelVec,cellSizesVec,dataCompenCells,repmat(p,[length(labelVec) 1])];
     dataCompenScaleSizeL = [labelVec,cellSizesVec,dataCompenScaleSizeCells,repmat(p,[length(labelVec) 1])];
 
-%     dataTransStdL = [labelVec,dataCellsTransStd];
-%     dataScaleSizeTransStdL = [labelVec,dataScaleSizeCellsTransStd];
-%     dataStdL = [labelVec,dataCellsStd];
-%     dataScaleSizeStdL = [labelVec,dataScaleSizeCellsStd];
+    % dataTransStdL = [labelVec,dataCellsTransStd];
+    % dataScaleSizeTransStdL = [labelVec,dataScaleSizeCellsTransStd];
+    % dataStdL = [labelVec,dataCellsStd];
+    % dataScaleSizeStdL = [labelVec,dataScaleSizeCellsStd];
 
-%    channelLabelsForFCS = ['cellLabelInImage';'cellSize';massDS.Label];
+    % channelLabelsForFCS = ['cellLabelInImage';'cellSize';massDS.Label];
     channelLabelsForFCS = ['cellLabelInImage';'cellSize';massDS.Label;'PointNum'];
 
-    
+    %% plot sanity scatter images
+    if plotSanityPlots == 1
+        mkdir(pathSanityPlots);
+        MIBIboundary_compensation_plotting(dataScaleSizeCells,dataCompenScaleSizeCells,normChannels,normChannelsInds,pathSanityPlots);
+    end    
     
     %% save fcs
     TEXT.PnS = channelLabelsForFCS;
@@ -142,15 +141,13 @@ for p=1:1
     writeFCS([pathSegment,'/Point',num2str(pointNumber),'/dataRedSeaFCS.fcs'],dataCompenL,TEXT);
     writeFCS([pathSegment,'/Point',num2str(pointNumber),'/dataRedSeaScaleSizeFCS.fcs'],dataCompenScaleSizeL,TEXT);
 
-
     % writeFCS([resultsDir,'/dataFCS_p',num2str(pointNumber),'.fcs'],dataL,TEXT);
     % writeFCS([resultsDir,'/dataScaleSizeFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeL,TEXT);
     % writeFCS([resultsDir,'/dataTransFCS_p',num2str(pointNumber),'.fcs'],dataTransL,TEXT);
     % writeFCS([resultsDir,'/dataScaleSizeTransFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeTransL,TEXT);
     
-%     writeFCS([resultsDir,'/dataStdFCS_p',num2str(pointNumber),'.fcs'],dataStdL,TEXT);
-%     writeFCS([resultsDir,'/dataScaleSizeStdFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeStdL,TEXT);
-%     writeFCS([resultsDir,'/dataTransStdFCS_p',num2str(pointNumber),'.fcs'],dataTransStdL,TEXT);
-%     writeFCS([resultsDir,'/dataScaleSizeTransStdFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeTransStdL,TEXT);
-    
+    % writeFCS([resultsDir,'/dataStdFCS_p',num2str(pointNumber),'.fcs'],dataStdL,TEXT);
+    % writeFCS([resultsDir,'/dataScaleSizeStdFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeStdL,TEXT);
+    % writeFCS([resultsDir,'/dataTransStdFCS_p',num2str(pointNumber),'.fcs'],dataTransStdL,TEXT);
+    % writeFCS([resultsDir,'/dataScaleSizeTransStdFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeTransStdL,TEXT);
 end
