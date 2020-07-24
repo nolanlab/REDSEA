@@ -13,15 +13,29 @@ In breif, the REDSEA algorithm identifies the boudary region for each cell based
 
 ## Table of content
 
+- [Example Data](#example-data)
+    - [MIBI data](#mibi-data)
+    - [CyCIF data](#cycif-data)
+
 - [Required Inputs](#required-inputs)
     - [MATLAB scripts](#matlab-scripts)
     - [tiff images and channel information](#tiff-images-and-channel-information)
     - [Segmentation Mask](#segmentation-mask)
-
+    
 - [REDSEA](#redsea)
     - [Parameters](#parameters)
     - [Sanity plots](#sanity-plots)
     - [Output](#output)
+
+## Example Data
+
+Here we have provided [example datasets](www.tbd.com) from two different multiplexed imaging modalities, [MIBI](https://www.nature.com/articles/nm.3488) and [CyCIF](https://www.pnas.org/content/110/29/11982).
+
+### MIBI data
+Multiplexed ion beam imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use data of tissue samples acquired by MIBI (Unpublished).
+
+### CyCIF data
+CyCIF is a method for highly multiplexed immuno-fluorescence imaging of formalin-fixed, paraffin-embedded (FFPE) specimens mounted on glass slides. Here we will use human tonsil data acquired with t-CyCIF method. The acquisition of this data is described in this [paper](https://www.nature.com/articles/s41597-019-0332-y) (Rashid, Rumana, et al, Scientific Data 2019)
 
 ## Required Inputs
 
@@ -441,7 +455,7 @@ REDSEA will produce the 4 FCS files for downstream analysis:
 It is recommended to use the ```dataRedSeaScaleSizeFCS.fcs``` file. We can see by using REDSEA compensation, the boundary signal spillover is dynamically eliminated and reinforced.
 
 For the MIBI dataset:
-<p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/fcs_result.png"></p>
+<p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/mibi_facsPlot.png"></p>
 
 And REDSEA also works comparably on the cycIF data:
 <p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF_facsPlot.png"></p>
