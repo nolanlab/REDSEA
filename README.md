@@ -32,7 +32,7 @@ In breif, the REDSEA algorithm identifies the boudary region for each cell based
 Here we have provided [example datasets](www.tbd.com) from two different multiplexed imaging modalities, [MIBI](https://www.nature.com/articles/nm.3488) and [CyCIF](https://www.pnas.org/content/110/29/11982).
 
 ### MIBI data
-Multiplexed ion beam imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use data of tissue samples acquired by MIBI (Unpublished).
+Multiplexed ion beam imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use data of non-human primate tissue samples acquired by MIBI (Unpublished).
 
 ### CyCIF data
 CyCIF is a method for highly multiplexed immuno-fluorescence imaging of formalin-fixed, paraffin-embedded (FFPE) specimens mounted on glass slides. Here we will use human tonsil data acquired with t-CyCIF method. The acquisition of this data is described in this [paper](https://www.nature.com/articles/s41597-019-0332-y) (Rashid, Rumana, et al, Scientific Data 2019)
