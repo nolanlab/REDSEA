@@ -444,6 +444,6 @@ For the MIBI dataset:
 <p align="center"><img width=55%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/fcs_result.png"></p>
 
 And REDSEA also works comparably on the cycIF data:
-<p align="center"><img width=57%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF_facsPlot.png"></p>
+<p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF_facsPlot.png"></p>
 
 
