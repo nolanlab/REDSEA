@@ -41,7 +41,7 @@ CyCIF is a method for highly multiplexed immuno-fluorescence imaging of formalin
 
 
 ### MATLAB scripts
-The [MATLAB scripts](https://github.com/BokaiZhu/REDSEA/tree/master/code) include the REDSEA algorithm, along with other scripts created by [Leeat Keren](https://github.com/lkeren/MIBIAnalysis) for processing multiplexed images, and a fcs processing script created by Jakub Nedbal (Jakub Nedbal (2020). writeFCS(fname, DATA, TEXT, OTHER) (https://www.mathworks.com/matlabcentral/fileexchange/42603-writefcs-fname-data-text-other), MATLAB Central File Exchange. Retrieved July 26, 2020.).
+The [MATLAB scripts](https://github.com/BokaiZhu/REDSEA/tree/master/code) include the REDSEA algorithm, along with other scripts created by [Leeat Keren](https://github.com/lkeren/MIBIAnalysis) for processing multiplexed images, and a fcs processing script ```writeFCS``` created by Jakub Nedbal (https://www.mathworks.com/matlabcentral/fileexchange/42603-writefcs-fname-data-text-other).
 
 ### tiff images and channel information
 There should be a CSV file containing the channel name information.
