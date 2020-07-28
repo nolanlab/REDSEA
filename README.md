@@ -9,7 +9,7 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
 
 ### How it works
 
-In breif, the REDSEA algorithm identifies the boudary region for each cell based on the segmentation mask. Subsequently, for one cell's each channel, signals were subtracted based on the shared boundary with neighbooring cells ,and their corresponding signal.  Moreover, the removed signal from adjacent cells can be reinforced back to the cell by option. For detailed information look at the Material and Methods section of the [paper](www.facebook.com).
+In brief, the REDSEA algorithm identifies the boudary region for each cell based on the segmentation mask. Subsequently, for one cell's each channel, signals were subtracted based on the shared boundary with neighboring cells, and their corresponding signal. Moreover, the removed signal from adjacent cells can be reinforced back to the cell by option. For detailed information look at the Materials and Methods section of the [paper](www.facebook.com).
 
 ## Table of content
 
@@ -55,7 +55,7 @@ This method requires you to provide a cell segmentation mask. A cell nuclei prob
 
 <p align="center"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/probability_matrix.png"></p>
 
-DeepCell is also easy to implement on different imaging modalities. Here is a prediction model we trained with ~ 1500 cells in the [cycIF](https://www.nature.com/articles/s41597-019-0332-y) dataset:
+DeepCell is also easy to implement on different imaging modalities. Here is a prediction model we trained with ~ 1500 cells in the [CyCIF](https://www.nature.com/articles/s41597-019-0332-y) dataset:
 
 <p align="center"><img width=70%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF.png"></p>
 
@@ -249,10 +249,10 @@ There are **two methods** for boundary compensation in REDSEA: ```Sudoku``` and 
 
 <p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/method_show.png"></p>
 
-The pixel number for expansion should be **proportional** to the cell size: in our MIBI data, the average cell size is 107 pixels, and we used 2 pixels for expansion; In the [cycIF tonsil dataset](https://www.synapse.org/#!Synapse:syn17796423) the average cell size is 325 pixels, so 3-4 pixels is recommended. 
+The pixel number for expansion should be **proportional** to the cell size: in our MIBI data, the average cell size is 107 pixels, and we used 2 pixels for expansion; In the [CyCIF tonsil dataset](https://www.synapse.org/#!Synapse:syn17796423) the average cell size is 325 pixels, so 3-4 pixels is recommended. 
 
 Also, you need to supply a list of channel names to perform the compensation process: normally you should only compensate for the **surface markers**, like in our case:
-```'CD4';'CD56';'CD21 (CR2)';'CD163';'CD68';'CD3';'CD20';'CD8a';'CD45'```
+```'CD4';'CD56';'CD21 (CR2)';'CD163';'CD68';'CD3';'CD20';'CD8a'```
 
 Take a look at the annotated code in the block under:
 
@@ -435,7 +435,7 @@ end
 
 ### Sanity plots
 
-To visually inspect if the parameters discribed in the previous section are optimal for your data, we provided with a flag in the script ```plotSanityPlots = 1```. Once set to 1, it will produce the pairwise combination scatter plots of all the compensated channels. User can use these plots to evaluate if the compensation is optimal (for example looking at CD4-CD8, CD3-CD20 etc.) It is suggested to run this first will **less** channels, find the optimal parameters, then run the full list.  
+To visually inspect if the parameters described in the previous section are optimal for your data, we provided with a flag in the script ```plotSanityPlots = 1```. Once set to 1, it will produce the pairwise combination scatter plots of all the compensated channels. User can use these plots to evaluate if the compensation is optimal (for example looking at CD4-CD8, CD3-CD20 etc.) It is suggested to run this first with **less** channels, find the optimal parameters, then run the full list.  
 
 <p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/Sanity_check_CD68_CD20.png"></p>
 
@@ -457,7 +457,7 @@ It is recommended to use the ```dataRedSeaScaleSizeFCS.fcs``` file. We can see b
 For the MIBI dataset:
 <p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/mibi_facsPlot.png"></p>
 
-And REDSEA also works comparably on the cycIF data:
+And REDSEA also works comparably on the CyCIF data:
 <p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF_facsPlot.png"></p>
 
 
