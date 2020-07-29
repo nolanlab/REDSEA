@@ -59,6 +59,7 @@ DeepCell is also easy to implement on different imaging modalities. Here is a pr
 
 <p align="center"><img width=100%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF.png"></p>
 
+In the example data folder, we have provided a nucleus prediction matrix for the MIBI and CyCIF data, with the name ```feature_1_frame_1_p1_.tif```, in the ```deepcell``` sub folder.
 
 After producing a nuclei probablity mask, we will then use the script ```MibiSegmentByDeepProbWithPerim3.m``` to implement a watershed algorithm for whole cell segmentation. This will produce something like this:
 
@@ -70,51 +71,37 @@ After producing a nuclei probablity mask, we will then use the script ```MibiSeg
 
 
 ```MATLAB
-%% Pipeline for nuclear segmentation using pixel probabilities from deepCell
-% Changed the pipeline to use the boundaries from the deepcell as boudaries
-% instead of the raw nuclear intensities.
+%% Nuclear segmentation using pixel probabilities from deepCell
+% Modified from original script from Leeat Keren
+% Changed the pipeline to use the probablities from the deepcell instead of 
+% the raw nuclear intensities.
+% 25July2020, by Yunhao Bai and Sizun Jiang
 
-t1 = clock;
-% maxs = imextendedmax(probNuc,0.015);
-% probNuc>0.05
+% Main path for the all the data
+mainPath = 'sampleData_MIBI';
+resultsPath = [mainPath,'/segmentResults/']; % for the next step, put the 
+% output segmentationParams.mat and PureSegmentation.tif to the
+% originalTiff/Point? folder
 
-path = 'inputs/Point1/dsDNA.tiff';
-%path = '1FOV/Histone H3.tiff';
-resultsPath = 'watershed_result';
-%resultsPath = 'segmentated_H3_1FOV_resize_back';
-%deepPath = 'deepcell_1FOV';
-deepPath = 'deepcell';
-
-%segmentThres = 0.015; %change from 0.1 to 0.02
-%probNucThres = 0.5; %change from 0.05 to 0.5
-for segmentThres=0.01:0.005:0.02
-for probNucThres=0.05:0.15:0.5
 for p=1:1
-    disp(['point',num2str(p)]);
-    pointNumber=p;
+for segmentThres=0.05 % change from 0.02 to 0.1, segmentThres defines the 
+% local maximum, higher segmentThres leads to fewer cells and more merged
+% regions
+for probNucThres=0.05 % change from 0.05 to 0.5, probNucThres defines how 
+% board the cells will expand
+    pointNumber=p;disp(['point',num2str(p)]);
     
-    %{
-    %% Get perimiters of nuclei for plotting
-    % load data and get nuclear markers
-    load([path,'/Point',num2str(pointNumber),'/dataDeNoiseCohort.mat']);
-    imSize = (size(countsNoNoise,1));
-    % sum nuclear markers to increase contrast
-    nucleiChannels = {'Histone H3'};
-    [tf loc] = ismember(nucleiChannels,massDS.Label);
-    nucIm = sum(countsNoNoise(:,:,loc),3);
-    %}
-    
-    % read tiff image back to matrix for prediction
-    t = Tiff(path,'r');
+    % read .tiff image of nucleus marker to matrix for image 
+    pathNucleusMarker = [mainPath,'/originalTIFF/Point',num2str(p),'/dsDNA.tiff'];
+    t = Tiff(pathNucleusMarker,'r');
     nucIm = read(t);
-    maxv=50;
+    maxv=3000; %the max value of 
     rgb_image = MibiGetRGBimageFromMat(nucIm,maxv);
 
-    % %% Get maxima from deep learning probabilities
-    % read nuclear segmentation from Ilastik/deepcell
-    probNuc = double(imread([deepPath,'/nuclei-probability-matrix.tif']));
-    figure;
-    imagesc(probNuc);
+    % %% Get maxima from deepCell probabilities
+    % read possibility map from deepCell/ilastik/other segmentation methods
+    probNuc = double(imread([mainPath,'/deepCell/feature_1_frame_1_p',num2str(p),'_dsDNA.tif']));
+    figure;imagesc(probNuc);
 
     % find local maxima in probability map
     maxs = imextendedmax(probNuc,segmentThres); % change from 0.1 to 0.02
@@ -133,7 +120,8 @@ for p=1:1
     [B,L] = bwboundaries(maxs,4,'noholes');
     maxsFix = bw & maxs;
 
-    % modify the image so that the background pixels and the extended maxima pixels are forced to be the only local minima in the image.
+    % modify the image so that the background pixels and the extended maxima 
+    % pixels are forced to be the only local minima in the image.
     Jc = imcomplement(probNuc);
     I_mod = imimposemin(Jc, ~bw | maxsFix);
     L = watershed(I_mod);
@@ -209,8 +197,8 @@ for p=1:1
         labelIdentityNew(i) = labelIdentity(currLabels(i));
     end
 
-    cellPerimNewMod= bwperim(newLmod);
-    cellPerimNewMod= newLmod;
+    cellPerimNewMod = bwperim(newLmod);
+    cellPerimNewMod = newLmod;
     cellPerimNewMod(newL>0) = 100;
     cellPerimNewMod(cellPerimNewMod==0)=1;
     cellPerimNewMod(cellPerimNewMod==100)=0;
@@ -226,14 +214,10 @@ for p=1:1
     imwrite(rgb_image_cellPerimNewMod,[resultsPath,'/Point',num2str(pointNumber),'_',num2str(segmentThres),'_',num2str(probNucThres),'/compareIlastikDeep.tif'],'tif');
     imwrite(cellPerimNewMod,[resultsPath,'/Point',num2str(pointNumber),'_',num2str(segmentThres),'_',num2str(probNucThres),'/PureSegmentation.tif'],'tif');
     save([resultsPath,'/Point',num2str(pointNumber),'_',num2str(segmentThres),'_',num2str(probNucThres),'/segmentationParams.mat'],'newLmod','cellPerimNewMod','labelIdentityNew');
-    %close all;
 end
 end
 end
 
-t2=clock;
-t = etime(t2,t1);
-disp(['elapsed time: ',num2str(t)]);
 
 ```
 
@@ -262,42 +246,58 @@ Take a look at the annotated code in the block under:
 
 
 ```MATLAB
-% MibiExtractSingleCellDataFromSegmentation
-% Based on the Original Script by Leeat Keren
+%% Extract single cell data and do the REDSEA compensation
+% Based on the original script from Leeat Keren
 % This now reads in any folder of TIFFs with individual channels from the 
 % same field of view, and uses that to recreate a countsNoNoise based on 
 % the massDS order.
 % Then performs REDSEA compensation as implemented by Yunhao Bai
 % The outputs will be REDSEA compensated and non-compensated FCS files
-% 4May2020 Yunhao Bai, Sizun Jiang
+% 4May2020, Yunhao Bai, Sizun Jiang
 
-% This is a csv file for your channels within
-massDS = MibiReadMassData('example_channel_inforamtion.csv');
-path = 'Inputs'; % This assumes the path points to a folder 
-% containing all the Points from the run. Your segmentationParams.mat from 
-% each point should be in the each Point's folder
-% There should be a segmentation.mat in the same folder containing the
-% segmentation of the image.
+
+% Main path for the all the data
+mainPath = 'sampleData_MIBI';
+
+% This is a csv file for your channel labels within
+massDS = dataset('File',[mainPath,'/sampleData.csv'],'Delimiter',',');
+
+% This assumes the path points to a folder containing all the Points from 
+% the run. Your segmentationParams.mat from each point should be in the 
+% each Point's folder
+pathTiff = [mainPath,'/originalTiff']; 
 
 % This is where the FCS file output will go to
-pathSegment = 'result/';
+pathResults = [mainPath,'/FCS_output'];
 
 % Select the channels that are expected to be expressed. Cells with minimal
 % expression of at least one of these channels will be removed
-clusterChannels = massDS.Label(6:46); % exclude elemental channels
+clusterChannels = massDS.Label; % exclude elemental channels (here the 
+% sample dataset does not contain 
 [~, clusterChannelsInds] = ismember(clusterChannels,massDS.Label);
 
-% boundaryMod determines the type of compensation done for REDSEA.
-% elementShape. 1:Sudoku style, 2: Cross style
+% boundaryMod determines the type of compensation done.
+% 1:whole cell compensation
+% 2:boundary compensation (default)
+boundaryMod = 2;
+% REDSEAChecker determines the type of compensation done.
+% 0:only subtraction; 
+% 1:subtraction and reinforcement (default)
+REDSEAChecker = 1;
+
+% for boundary compensation, needs to specify elementShape. 
+% 1:Sudoku style, 2:Cross style
+elementShape = 2;
 % elementSize. How many pixels around the center to be considered for the
 % elementShape, can be selected from 1-4.
 % As a default, keep elementShape and elementSize as 2.
-elementShape = 2;
 elementSize = 2;
+
 % Select channels for REDSEA compensation. Surface markers are recommended
-%boundary compensation codes
-%selected channels to do the boundary compensation
-normChannels = {'CD16';'CD209 (DC-SIGN)';'CD4';'CD11c';'CD56';'CD39';'CD21 (CR2)';'PD-1';'CCR7';'CD163';'CD68';'CD8';'CD3';'CD45-RA';'CD86';'CTLA-4';'CD20';'MPO';'HLA-DR';'CD169 (Sialoadhesin)';'CD8a';'CD11b';'CD36';'Digoxigenin (DIG)';'CD25';'CD45'};
+% boundary compensation codes
+% selected channels to do the boundary compensation
+normChannels = {'CD4';'CD56';'CD21 (CR2)';'CD163';'CD68';'CD3';'CD20';'CD8a'};
+%normChannels = {'x7500y3500_1700_DAPI';'x7500y3500_1700_CD3';'x7500y3500_1700_CD4';'x7500y3500_1700_CD8a';'x7500y3500_1700_CD11b';'x7500y3500_1700_CD20';'x7500y3500_1700_CD45';'x7500y3500_1700_CD68'};
 [~, normChannelsInds] = ismember(normChannels,massDS.Label);
 channelNormIdentity = zeros(length(massDS.Label),1);
 % Getting an array of flags for whether to compensate or not
@@ -307,35 +307,31 @@ end
 
 % Whether what to plot scatter to check the REDSEA result and effect,
 % default=0 for not, 1 for plotting.
-plotSanityPlots = 1;
-pathSanityPlots = strcat('result/sanityPlots/', 'Shape',num2str(elementShape), 'elementSize', num2str(elementSize), '/');
+% Note that if multiple channels selected (in normChannels), to plot out all
+% the sanity plots need long time.
+plotSanityPlots = 0;
 
 %%
-mkdir(pathSegment);
+mkdir(pathResults);
 
 for p=1:1
     disp(['point',num2str(p)]);
-    pointNumber=p;
-    % Load tiffs to recreate countsNoNoise
+    pointNumber = p;
+    % load tiffs to recreate countsNoNoise
     for i=1:length(massDS.Label)
-        t = imread([path, '/Point', num2str(pointNumber), '/', massDS.Label{i}, '.tiff']);
+        t = imread([pathTiff, '/Point', num2str(pointNumber), '/', massDS.Label{i}, '.tiff']);
         d = double(t);
-    %     imshow(d)
+        % imshow(d)
         countsNoNoise(:,:,i) = d;
     end
         
-    % Load segmentation file
-%     load([path,'/Point',num2str(pointNumber),'/segmentationParams.mat']);
-    load([path, '/Point', num2str(pointNumber), '/watershed_result/Point1_0.01_0.35/segmentationParams.mat']);
+    % load segmentation file
+    load([pathTiff, '/Point', num2str(pointNumber), '/segmentationParams.mat']);
     labelNum = max(max(newLmod));
     channelNum = length(massDS);
     stats = regionprops(newLmod,'Area','PixelIdxList'); % Stats on cell size. Region props is DF with cell location by count
     countsReshape= reshape(countsNoNoise,size(countsNoNoise,1)*size(countsNoNoise,2),channelNum);
-%     % make a data matrix the size of the number of labels x the number of markers
-%     data = zeros(labelNum,channelNum);
-%     dataScaleSize = zeros(labelNum,channelNum);
-%     cellSizes = zeros(labelNum,1);
-
+    
     % make a data matrix the size of the number of labels x the number of markers
     % Include one more marker for cell size
     data = zeros(labelNum,channelNum);
@@ -344,33 +340,32 @@ for p=1:1
     
     % for each label extract information
     for i=1:labelNum
-        %
         currData = countsReshape(stats(i).PixelIdxList,:);
-        
         data(i,1:channelNum) = sum(currData,1);
         dataScaleSize(i,1:channelNum) = sum(currData,1) / stats(i).Area;
         cellSizes(i) = stats(i).Area;
     end
     
     %% do cell boundary compensation
-    dataCompen = MIBIboundary_compensation_boundarySA(newLmod,data,countsNoNoise,channelNormIdentity,elementShape,elementSize);
-    
+    if boundaryMod == 1
+        dataCompen = MIBIboundary_compensation_wholeCellSA(newLmod,data,channelNormIdentity,REDSEAChecker);
+    elseif boundaryMod == 2
+        dataCompen = MIBIboundary_compensation_boundarySA(newLmod,data,countsNoNoise,channelNormIdentity,elementShape,elementSize,REDSEAChecker);
+    end
     dataCompenScaleSize = dataCompen./repmat(cellSizes,[1 channelNum]);
 
-%     %% Add point number 
-% %     pointnum = double(repmat(p, 1, length(data))); 
-%     pointnum = repelem(p, length(data),[1]);
-%     data = [data, pointnum];
-%     dataScaleSize = [dataScaleSize, pointnum];
-%     dataCompen = [dataCompen, pointnum];
-%     dataCompenScaleSize = [dataCompenScaleSize, pointnum];
-% 
-%     
-    %%
+    % %% Add point number 
+    % pointnum = double(repmat(p, 1, length(data))); 
+    % pointnum = repelem(p, length(data),[1]);
+    % data = [data, pointnum];
+    % dataScaleSize = [dataScaleSize, pointnum];
+    % dataCompen = [dataCompen, pointnum];
+    % dataCompenScaleSize = [dataCompenScaleSize, pointnum];
 
+    %%
     % get the final information only for the labels with 
     % 1.positive nuclear identity (cells)
-    % 2. That have enough information in the clustering channels to be
+    % 2.that have enough information in the clustering channels to be
     % clustered
     labelIdentityNew2 = labelIdentityNew([1:end-1]); % fix bug resulting from previous script
     sumDataScaleSizeInClusterChannels = sum(dataScaleSize(:,clusterChannelsInds),2);
@@ -380,8 +375,7 @@ for p=1:1
     dataScaleSizeCells = dataScaleSize(labelIdentityNew2==1,:);
     dataCompenCells = dataCompen(labelIdentityNew2==1,:);
     dataCompenScaleSizeCells = dataCompenScaleSize(labelIdentityNew2==1,:);
-        
-    
+
     labelVec=find(labelIdentityNew2==1);
     
     % get cell sizes only for cells
@@ -392,41 +386,41 @@ for p=1:1
     dataCompenL = [labelVec,cellSizesVec,dataCompenCells,repmat(p,[length(labelVec) 1])];
     dataCompenScaleSizeL = [labelVec,cellSizesVec,dataCompenScaleSizeCells,repmat(p,[length(labelVec) 1])];
 
-%     dataTransStdL = [labelVec,dataCellsTransStd];
-%     dataScaleSizeTransStdL = [labelVec,dataScaleSizeCellsTransStd];
-%     dataStdL = [labelVec,dataCellsStd];
-%     dataScaleSizeStdL = [labelVec,dataScaleSizeCellsStd];
+    % dataTransStdL = [labelVec,dataCellsTransStd];
+    % dataScaleSizeTransStdL = [labelVec,dataScaleSizeCellsTransStd];
+    % dataStdL = [labelVec,dataCellsStd];
+    % dataScaleSizeStdL = [labelVec,dataScaleSizeCellsStd];
 
-%    channelLabelsForFCS = ['cellLabelInImage';'cellSize';massDS.Label];
+    % channelLabelsForFCS = ['cellLabelInImage';'cellSize';massDS.Label];
     channelLabelsForFCS = ['cellLabelInImage';'cellSize';massDS.Label;'PointNum'];
+    
+    %% output
+    outputPath = [pathResults,'/Point',num2str(pointNumber),'/BM=',num2str(boundaryMod),'_RC=',num2str(REDSEAChecker),'_Shape=',num2str(elementShape),'_Size=',num2str(elementSize)];
+    mkdir(outputPath);
 
-    %% plot sanity scatter images
+    % plot sanity scatter images
     if plotSanityPlots == 1
+        pathSanityPlots = [outputPath,'/sanityPlots/'];
         mkdir(pathSanityPlots);
         MIBIboundary_compensation_plotting(dataScaleSizeCells,dataCompenScaleSizeCells,normChannels,normChannelsInds,pathSanityPlots);
     end    
     
-    %% save fcs
+    % save fcs
     TEXT.PnS = channelLabelsForFCS;
     TEXT.PnN = channelLabelsForFCS;
-    mkdir([pathSegment,'/Point',num2str(pointNumber)]);
-    save([pathSegment,'/Point',num2str(pointNumber),'/cellData.mat'],'labelIdentityNew2','labelVec','cellSizesVec','dataCells','dataScaleSizeCells','dataCompenCells','dataCompenScaleSizeCells','channelLabelsForFCS');
-    writeFCS([pathSegment,'/Point',num2str(pointNumber),'/dataFCS.fcs'],dataL,TEXT);
-    writeFCS([pathSegment,'/Point',num2str(pointNumber),'/dataScaleSizeFCS.fcs'],dataScaleSizeL,TEXT);
-    writeFCS([pathSegment,'/Point',num2str(pointNumber),'/dataRedSeaFCS.fcs'],dataCompenL,TEXT);
-    writeFCS([pathSegment,'/Point',num2str(pointNumber),'/dataRedSeaScaleSizeFCS.fcs'],dataCompenScaleSizeL,TEXT);
-
-
-    % writeFCS([resultsDir,'/dataFCS_p',num2str(pointNumber),'.fcs'],dataL,TEXT);
-    % writeFCS([resultsDir,'/dataScaleSizeFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeL,TEXT);
-    % writeFCS([resultsDir,'/dataTransFCS_p',num2str(pointNumber),'.fcs'],dataTransL,TEXT);
-    % writeFCS([resultsDir,'/dataScaleSizeTransFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeTransL,TEXT);
     
-%     writeFCS([resultsDir,'/dataStdFCS_p',num2str(pointNumber),'.fcs'],dataStdL,TEXT);
-%     writeFCS([resultsDir,'/dataScaleSizeStdFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeStdL,TEXT);
-%     writeFCS([resultsDir,'/dataTransStdFCS_p',num2str(pointNumber),'.fcs'],dataTransStdL,TEXT);
-%     writeFCS([resultsDir,'/dataScaleSizeTransStdFCS_p',num2str(pointNumber),'.fcs'],dataScaleSizeTransStdL,TEXT);
-    
+    save([outputPath,'/cellData.mat'],'labelIdentityNew2','labelVec','cellSizesVec','dataCells','dataScaleSizeCells','dataCompenCells','dataCompenScaleSizeCells','channelLabelsForFCS');
+    writeFCS([outputPath,'/dataFCS.fcs'],dataL,TEXT);
+    writeFCS([outputPath,'/dataScaleSizeFCS.fcs'],dataScaleSizeL,TEXT);
+    writeFCS([outputPath,'/dataRedSeaFCS.fcs'],dataCompenL,TEXT);
+    writeFCS([outputPath,'/dataRedSeaScaleSizeFCS.fcs'],dataCompenScaleSizeL,TEXT);
+
+    % writeFCS([outputPath,'/dataTransFCS.fcs'],dataTransL,TEXT);
+    % writeFCS([outputPath,'/dataScaleSizeTransFCS.fcs'],dataScaleSizeTransL,TEXT);
+    % writeFCS([outputPath,'/dataStdFCS.fcs'],dataStdL,TEXT);
+    % writeFCS([outputPath,'/dataScaleSizeStdFCS.fcs'],dataScaleSizeStdL,TEXT);
+    % writeFCS([outputPath,'/dataTransStdFCS.fcs'],dataTransStdL,TEXT);
+    % writeFCS([outputPath,'/dataScaleSizeTransStdFCS.fcs'],dataScaleSizeTransStdL,TEXT);
 end
 ```
 
@@ -439,6 +433,7 @@ To visually inspect if the parameters described in the previous section are opti
 
 <p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/Sanity_check_CD68_CD20.png"></p>
 
+The sanity plots will be produced in the ```sanityPlots``` sub-folder.
 
 ### Output
 
