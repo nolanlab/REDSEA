@@ -219,10 +219,12 @@ end
 end
 
 ```
-This process produced a file called ```segmentationParams.mat``` and will be stored in the ```segmentResults``` sub-folder.
 
 </p>
 </details>
+
+This process produced a file called ```segmentationParams.mat``` and will be stored in the ```segmentResults``` sub-folder.
+
 
 ## REDSEA
 
