@@ -57,7 +57,7 @@ This method requires you to provide a cell segmentation mask. A cell nuclei prob
 
 DeepCell is also easy to implement on different imaging modalities. Here is a prediction model we trained with ~ 1500 cells in the [CyCIF](https://www.nature.com/articles/s41597-019-0332-y) dataset:
 
-<p align="center"><img width=70%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF.png"></p>
+<p align="center"><img width=100%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF.png"></p>
 
 
 After producing a nuclei probablity mask, we will then use the script ```MibiSegmentByDeepProbWithPerim3.m``` to implement a watershed algorithm for whole cell segmentation. This will produce something like this:
@@ -247,7 +247,7 @@ With the .tiff images, .mat segmentation file and .csv channel information, we a
 
 There are **two methods** for boundary compensation in REDSEA: ```Sudoku``` and ```Cross```. The algorithm walks through the boundaries of each cell, and decides the area to extract signal. You would need to choose one of the two methods and deside how many pixels to expand from the boundary pixel: 
 
-<p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/method_show.png"></p>
+<p align="center"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/method_show.png"></p>
 
 The pixel number for expansion should be **proportional** to the cell size: in our MIBI data, the average cell size is 107 pixels, and we used 2 pixels for expansion; In the [CyCIF tonsil dataset](https://www.synapse.org/#!Synapse:syn17796423) the average cell size is 325 pixels, so 3-4 pixels is recommended. 
 
