@@ -435,7 +435,7 @@ To visually inspect if the parameters described in the previous section are opti
 
 <p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/Sanity_check_CD68_CD20.png"></p>
 
-The sanity plots will be produced in the ```sanityPlots``` sub-folder.
+The sanity plots will be produced in the ```sanityPlots``` sub-folder, along with the output of fcs files.
 
 ### Output
 
