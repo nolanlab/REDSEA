@@ -9,7 +9,7 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
 
 ### How it works
 
-In brief, the REDSEA algorithm identifies the boudary region for each cell based on the segmentation mask. Subsequently, for one cell's each channel, signals were subtracted based on the shared boundary with neighboring cells, and their corresponding signal. Moreover, the removed signal from adjacent cells can be reinforced back to the cell by option. For detailed information look at the Materials and Methods section of the [paper](https://www.biorxiv.org/).
+In brief, the REDSEA algorithm identifies the boundary region for each cell, based on the segmentation mask. Subsequently, for one cell's each channel, signals were subtracted based on the shared boundary with neighboring cells, and their corresponding signal. Moreover, the removed signal from adjacent cells can be reinforced back to the cell. For detailed information look at the Materials and Methods section of the [paper](https://www.biorxiv.org/).
 
 ## Table of content
 
@@ -32,7 +32,7 @@ In brief, the REDSEA algorithm identifies the boudary region for each cell based
 Here we have provided [example datasets](https://github.com/BokaiZhu/REDSEA/tree/master/code) from two different multiplexed imaging modalities, [MIBI](https://www.nature.com/articles/nm.3488) and [CyCIF](https://www.pnas.org/content/110/29/11982).
 
 ### MIBI data
-Multiplexed ion beam imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use data of non-human primate tissue samples acquired by MIBI (Unpublished).
+Multiplexed Ion Beam Imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use data of non-human primate tissue samples acquired by MIBI (Unpublished).
 
 ### CyCIF data
 CyCIF is a method for highly multiplexed immuno-fluorescence imaging of formalin-fixed, paraffin-embedded (FFPE) specimens mounted on glass slides. Here we will use human tonsil data acquired with t-CyCIF method. The acquisition of this data is described in this [paper](https://www.nature.com/articles/s41597-019-0332-y) (Rashid, Rumana, et al, Scientific Data 2019)
@@ -59,7 +59,7 @@ DeepCell is also easy to implement on different imaging modalities. Here is a pr
 
 <p align="center"><img width=100%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycIF.png"></p>
 
-In the example data folder, we have provided a nucleus prediction matrix for the MIBI and CyCIF data, with the name ```feature_1_frame_1_p1_.tif```, in the ```deepCell``` sub folder.
+In the [example data folder](https://github.com/BokaiZhu/REDSEA/tree/master/code), we have provided a nucleus prediction matrix for the MIBI and CyCIF data, with the name ```feature_1_frame_1_p1_.tif```, in the ```deepCell``` sub folder.
 
 After producing a nuclei probablity mask, we will then use the script ```MibiSegmentByDeepProbWithPerim3.m``` to implement a watershed algorithm for whole cell segmentation. This will produce something like this:
 
@@ -223,13 +223,13 @@ end
 </p>
 </details>
 
-This process produced a file called ```segmentationParams.mat```.
+This process produced a file called ```segmentationParams.mat``` and stored in a subfolder. This file will be used automatically by the REDSEA algorithm.
 
 
 ## REDSEA
 
 ### Parameters
-With the .tiff images, .mat segmentation file and .csv channel information, we are now ready to implement REDSEA for boundary compensation.
+With the ```.tiff``` images, ```.mat``` segmentation file and ```.csv``` channel information, we are now ready to implement REDSEA for boundary compensation.
 
 There are **two methods** for boundary compensation in REDSEA: ```Sudoku``` and ```Cross```. The algorithm walks through the boundaries of each cell, and decides the area to extract signal. You would need to choose one of the two methods and deside how many pixels to expand from the boundary pixel: 
 
