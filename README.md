@@ -460,7 +460,7 @@ REDSEA will produce the 4 FCS files for downstream analysis:
 It is recommended to use the ```dataRedSeaScaleSizeFCS.fcs``` file. We can see by using REDSEA compensation, the boundary signal spillover is dynamically eliminated and reinforced.
 
 For the MIBI dataset:
-<p align="center"><img width=80%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/mibi_redsea_fcsPlot_new.png"></p>
+<p align="center"><img width=70%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/mibi_redsea_fcsPlot_new.png"></p>
 
 And REDSEA also works comparably on the CyCIF data:
 <p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/cycif_redsea_fcs_plot.png"></p>
