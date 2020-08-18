@@ -441,7 +441,7 @@ end
 
 To visually inspect if the parameters described in the previous section are optimal for your data, we provided with a flag in the script ```plotSanityPlots = 1```. Once set to 1, it will produce the pairwise combination scatter plots of all the compensated channels. User can use these plots to evaluate if the compensation is optimal (for example looking at CD4-CD8, CD3-CD20 etc.) It is suggested to run this first with **less** channels, find the optimal parameters, then run the full list.  
 
-<p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/Sanity_check_CD68_CD20.png"></p>
+<p align="center"><img width=45%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/Sanity_check_x7500y3500_1700_CD3_x7500y3500_1700_CD20.png"></p>
 
 The sanity plots will be produced in the ```sanityPlots``` sub-folder, along with the output of fcs files.
 
