@@ -53,7 +53,7 @@ And also a folder containing .tiff images for each channel, where the names shou
 ### Segmentation Mask
 This method requires you to provide a cell segmentation mask. A cell nuclei probability matrix can be produced by your own chose (popular options include [ilastik](https://www.ilastik.org/) or [deepcell](https://github.com/vanvalenlab/deepcell-tf)). In our case for the MIBI data we implemented a trained-in-house deepcell CNN model.
 
-<p align="center"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/probability_matrix.png"></p>
+<p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/feature_1_frame_1_p1_dsDNA.png"></p>
 
 DeepCell is also easy to implement on different imaging modalities. Here is a prediction model we trained with ~ 1500 cells in the [CyCIF](https://www.nature.com/articles/s41597-019-0332-y) dataset:
 
