@@ -78,29 +78,34 @@ After producing a nuclei probablity mask, we will then use the script ```MibiSeg
 % 25July2020, by Yunhao Bai and Sizun Jiang
 
 % Main path for the all the data
-mainPath = 'sampleData_MIBI';
+mainPath = 'sampleData_MIBI'; %for MIBI
+%mainPath = 'sampleData_cycIF'; %for CyCIF
 resultsPath = [mainPath,'/segmentResults/']; % for the next step, put the 
 % output segmentationParams.mat and PureSegmentation.tif to the
 % originalTiff/Point? folder
 
 for p=1:1
-for segmentThres=0.05 % change from 0.02 to 0.1, segmentThres defines the 
+for segmentThres=0.01 % change from 0.01 to 0.1, segmentThres defines the 
 % local maximum, higher segmentThres leads to fewer cells and more merged
 % regions
-for probNucThres=0.05 % change from 0.05 to 0.5, probNucThres defines how 
+for probNucThres=0.35 % change from 0.05 to 0.5, probNucThres defines how 
 % board the cells will expand
     pointNumber=p;disp(['point',num2str(p)]);
     
-    % read .tiff image of nucleus marker to matrix for image 
-    pathNucleusMarker = [mainPath,'/originalTIFF/Point',num2str(p),'/dsDNA.tiff'];
+    % read .tiff image of nucleus marker to matrix for image  
+    pathNucleusMarker = [mainPath,'/originalTIFF/Point',num2str(p),'/dsDNA.tiff']; %for MIBI
+    %pathNucleusMarker = [mainPath,'/originalTIFF/Point',num2str(p),'/x7500y3500_1700_DAPI.tif']; %for CyCIF
     t = Tiff(pathNucleusMarker,'r');
     nucIm = read(t);
-    maxv=3000; %the max value of 
+    %the max value of nucleus channel .tiff
+    maxv=25; %for MIBI
+    %maxv=3000; %for CyCIF
     rgb_image = MibiGetRGBimageFromMat(nucIm,maxv);
 
     % %% Get maxima from deepCell probabilities
     % read possibility map from deepCell/ilastik/other segmentation methods
-    probNuc = double(imread([mainPath,'/deepCell/feature_1_frame_1_p',num2str(p),'_dsDNA.tif']));
+    probNuc = double(imread([mainPath,'/deepCell/feature_1_frame_1_p',num2str(p),'_dsDNA.tif'])); %for MIBI
+    %probNuc = double(imread([mainPath,'/deepCell/feature_1_frame_1_p',num2str(p),'_DAPI.tif'])); %for CyCIF
     figure;imagesc(probNuc);
 
     % find local maxima in probability map
@@ -218,6 +223,8 @@ end
 end
 end
 
+disp('Please put the PureSegmentation.tif and segmentationParams.mat to the corresponding originalTiff folder for next step.');
+
 ```
 
 </p>
@@ -259,7 +266,8 @@ Take a look at the annotated code in the block under:
 
 
 % Main path for the all the data
-mainPath = 'sampleData_MIBI';
+mainPath = 'sampleData_MIBI'; %for MIBI
+%mainPath = 'sampleData_cycIF'; %for CyCIF
 
 % This is a csv file for your channel labels within
 massDS = dataset('File',[mainPath,'/sampleData.csv'],'Delimiter',',');
@@ -298,8 +306,8 @@ elementSize = 2;
 % Select channels for REDSEA compensation. Surface markers are recommended
 % boundary compensation codes
 % selected channels to do the boundary compensation
-normChannels = {'CD4';'CD56';'CD21 (CR2)';'CD163';'CD68';'CD3';'CD20';'CD8a'};
-%normChannels = {'x7500y3500_1700_DAPI';'x7500y3500_1700_CD3';'x7500y3500_1700_CD4';'x7500y3500_1700_CD8a';'x7500y3500_1700_CD11b';'x7500y3500_1700_CD20';'x7500y3500_1700_CD45';'x7500y3500_1700_CD68'};
+normChannels = {'CD4';'CD56';'CD21 (CR2)';'CD163';'CD68';'CD3';'CD20';'CD8a'}; %for MIBI
+%normChannels = {'x7500y3500_1700_DAPI';'x7500y3500_1700_CD3';'x7500y3500_1700_CD4';'x7500y3500_1700_CD8a';'x7500y3500_1700_CD11b';'x7500y3500_1700_CD20';'x7500y3500_1700_CD45';'x7500y3500_1700_CD68'}; %for CyCIF
 [~, normChannelsInds] = ismember(normChannels,massDS.Label);
 channelNormIdentity = zeros(length(massDS.Label),1);
 % Getting an array of flags for whether to compensate or not
@@ -321,7 +329,7 @@ for p=1:1
     pointNumber = p;
     % load tiffs to recreate countsNoNoise
     for i=1:length(massDS.Label)
-        t = imread([pathTiff, '/Point', num2str(pointNumber), '/', massDS.Label{i}, '.tiff']);
+        t = imread([pathTiff, '/Point', num2str(pointNumber), '/', massDS.Label{i}, '.tiff']); %mind the .tif and .tiff
         d = double(t);
         % imshow(d)
         countsNoNoise(:,:,i) = d;
