@@ -9,7 +9,8 @@
 
 
 % Main path for the all the data
-mainPath = 'sampleData_MIBI';
+mainPath = 'sampleData_MIBI'; %for MIBI
+%mainPath = 'sampleData_cycIF'; %for CyCIF
 
 % This is a csv file for your channel labels within
 massDS = dataset('File',[mainPath,'/sampleData.csv'],'Delimiter',',');
@@ -48,8 +49,8 @@ elementSize = 2;
 % Select channels for REDSEA compensation. Surface markers are recommended
 % boundary compensation codes
 % selected channels to do the boundary compensation
-normChannels = {'CD4';'CD56';'CD21 (CR2)';'CD163';'CD68';'CD3';'CD20';'CD8a'};
-%normChannels = {'x7500y3500_1700_DAPI';'x7500y3500_1700_CD3';'x7500y3500_1700_CD4';'x7500y3500_1700_CD8a';'x7500y3500_1700_CD11b';'x7500y3500_1700_CD20';'x7500y3500_1700_CD45';'x7500y3500_1700_CD68'};
+normChannels = {'CD4';'CD56';'CD21 (CR2)';'CD163';'CD68';'CD3';'CD20';'CD8a'}; %for MIBI
+%normChannels = {'x7500y3500_1700_DAPI';'x7500y3500_1700_CD3';'x7500y3500_1700_CD4';'x7500y3500_1700_CD8a';'x7500y3500_1700_CD11b';'x7500y3500_1700_CD20';'x7500y3500_1700_CD45';'x7500y3500_1700_CD68'}; %for CyCIF
 [~, normChannelsInds] = ismember(normChannels,massDS.Label);
 channelNormIdentity = zeros(length(massDS.Label),1);
 % Getting an array of flags for whether to compensate or not
@@ -71,7 +72,7 @@ for p=1:1
     pointNumber = p;
     % load tiffs to recreate countsNoNoise
     for i=1:length(massDS.Label)
-        t = imread([pathTiff, '/Point', num2str(pointNumber), '/', massDS.Label{i}, '.tiff']);
+        t = imread([pathTiff, '/Point', num2str(pointNumber), '/', massDS.Label{i}, '.tiff']); %mind the .tif and .tiff
         d = double(t);
         % imshow(d)
         countsNoNoise(:,:,i) = d;
