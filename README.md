@@ -29,7 +29,7 @@ In brief, the REDSEA algorithm identifies the boundary region for each cell, bas
 
 ## Example Data
 
-Here we have provided [example datasets](https://github.com/BokaiZhu/REDSEA/tree/master/code) from two different multiplexed imaging modalities, [MIBI](https://www.nature.com/articles/nm.3488) and [CyCIF](https://elifesciences.org/articles/31657).
+Here we provide [example datasets](https://github.com/BokaiZhu/REDSEA/tree/master/code) from two different multiplexed imaging modalities, [MIBI](https://www.nature.com/articles/nm.3488) and [CyCIF](https://elifesciences.org/articles/31657).
 
 ### MIBI data
 Multiplexed Ion Beam Imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use data of non-human primate tissue samples acquired by MIBI (Unpublished).
