@@ -5,7 +5,6 @@
 %+ (cell B channel X counts)
 
 %assumption and approximation: 
-%1. this code leaveout the very boundary pixels, which is just 1 or 2 for each cells.
 %2. at corner of 3/4 different cells boundary, this code will triple/quadruple count that pixel.
 
 %% 
@@ -21,38 +20,31 @@ function MIBIdataNorm = MIBIboundary_compensation_wholeCellSA(newLmod, MIBIdata,
 [rowNum, colNum] = size(newLmod);
 cellNum = max(max(newLmod));
 cellPairMap = zeros(cellNum,cellNum);
+
 %factors = -1;
-for x = 2:rowNum-1 % we just leave out the boundary cases
-    for y = 2:colNum-1 % we just leave out the boundary cases
-        if newLmod(x,y) == 0
-            tempM = reshape(newLmod(x-1:x+1,y-1:y+1),[9 1]);
+niche = 1;
+newLmod_padded = padarray(newLmod,[niche niche],0,'both');
+
+%assemble the adjacency matrix
+for x = 1+niche:rowNum+niche
+    for y = 1+niche:colNum+niche
+        if newLmod_padded(x,y) == 0
+            tempM = reshape(newLmod_padded(x-1:x+1,y-1:y+1),[9 1]);
             tempFactors = unique(tempM);
-            %the theoretical extreme situation is 5, in a cross style, and
-            %this do appear quite frequently, so consider 3-5
+            %the theoretical extreme situation is 5, in a Four Courners 
+            %style, and this do appear quite frequently, so consider 3-5
 
             %for this part, we triple/quadruple count one pixel 3/4 times
             %for each pair.
-            if length(tempFactors) == 3 
+            if length(tempFactors) >= 3 
                 %only assign 1 times, as unique() sort the sequence,
                 %remember that the tempFactors(2) < tempFactors(3)
-                cellPairMap(tempFactors(2),tempFactors(3)) = cellPairMap(tempFactors(2),tempFactors(3))+1;
-            elseif length(tempFactors) == 4
-                cellPairMap(tempFactors(2),tempFactors(3)) = cellPairMap(tempFactors(2),tempFactors(3))+1;
-                cellPairMap(tempFactors(2),tempFactors(4)) = cellPairMap(tempFactors(2),tempFactors(4))+1;
-                cellPairMap(tempFactors(3),tempFactors(4)) = cellPairMap(tempFactors(3),tempFactors(4))+1;
-            elseif length(tempFactors) == 5
-                cellPairMap(tempFactors(2),tempFactors(3)) = cellPairMap(tempFactors(2),tempFactors(3))+1;
-                cellPairMap(tempFactors(2),tempFactors(4)) = cellPairMap(tempFactors(2),tempFactors(4))+1;
-                cellPairMap(tempFactors(2),tempFactors(5)) = cellPairMap(tempFactors(2),tempFactors(5))+1;
-                
-                cellPairMap(tempFactors(3),tempFactors(4)) = cellPairMap(tempFactors(3),tempFactors(4))+1;
-                cellPairMap(tempFactors(3),tempFactors(5)) = cellPairMap(tempFactors(3),tempFactors(5))+1;
-                
-                cellPairMap(tempFactors(4),tempFactors(5)) = cellPairMap(tempFactors(4),tempFactors(5))+1;
+                cellPairMap = cellPairMapUpdater(cellPairMap,tempFactors);
             end
         end
     end
 end
+
 %flip the matrix to make it double-direction
 cellPairMap = cellPairMap+cellPairMap';
 
@@ -73,4 +65,14 @@ MIBIdataNorm(MIBIdataNorm<0) = 0;
 
 %composite the normalized channels with non-normalized channels
 MIBIdataNorm = MIBIdata.*repmat(rev_channelNormIdentity,[1 cellNum])' + MIBIdataNorm.*repmat(channelNormIdentity,[1 cellNum])';
+end
+
+%% auxiliary function
+function cellPairMap = cellPairMapUpdater(cellPairMap,tempFactors)
+%functionalize the cellPair map updating process
+    cellPairs = nchoosek(tempFactors(2:end),2);
+    %the function will order the pairs with elements consequentially
+    for i = 1:size(cellPairs,1)
+        cellPairMap(cellPairs(i,1),cellPairs(i,2)) = cellPairMap(cellPairs(i,1),cellPairs(i,2)) + 1;
+    end
 end
