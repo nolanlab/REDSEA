@@ -3,13 +3,13 @@
 <p align="left"><img width=20%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/redsea.jpg"></p>
 
 # REDSEA
-We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDSEA) as a solution for spillover compensation without loss of signal. This is the step-by-step guidance of how to use REDSEA to produced a FCS file with compensated channel information.
+We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDSEA) as a solution for spillover compensation without loss of signal. This is the step-by-step guidance of how to use REDSEA to produce a FCS file with compensated channel signals. This FCS file can then be read for your downstream spatial analysis.
 
 <p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/overview.png"></p>
 
 ### How it works
 
-In brief, the REDSEA algorithm identifies the boundary region for each cell, based on the segmentation mask. Subsequently, for one cell's each channel, signals were subtracted based on the shared boundary with neighboring cells, and their corresponding signal. Moreover, the removed signal from adjacent cells can be reinforced back to the cell. For detailed information look at the Materials and Methods section of the [paper](https://www.biorxiv.org/).
+In brief, the REDSEA algorithm identifies the boundary region for each cell, based on the segmentation mask. Subsequently, for each channel from a single cell, signals were subtracted based on its shared boundary with neighboring cells, and their corresponding signal in the same channel. Moreover, the removed signal from adjacent cells can be reinforced back to the cell. For detailed information look at the Materials and Methods section of the [paper](https://www.biorxiv.org/).
 
 ## Table of content
 
@@ -32,7 +32,7 @@ In brief, the REDSEA algorithm identifies the boundary region for each cell, bas
 Here we provide [example datasets](https://github.com/BokaiZhu/REDSEA/tree/master/code) from two different multiplexed imaging modalities, [MIBI](https://www.nature.com/articles/nm.3488) and [CyCIF](https://elifesciences.org/articles/31657).
 
 ### MIBI data
-Multiplexed Ion Beam Imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use data of non-human primate tissue samples acquired by MIBI [Unpublished](https://github.com/nolanlab/REDSEA/tree/master/MIBI_original/Rhesus%20Macaque%20MIBI%20images%20Figures%201%20and%202).
+Multiplexed Ion Beam Imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use MIBI data generated from non-human primate lymph nodes as part of the REDSEA manuscript [Unpublished](https://github.com/nolanlab/REDSEA/tree/master/MIBI_original/Rhesus%20Macaque%20MIBI%20images%20Figures%201%20and%202).
 
 ### CyCIF data
 CyCIF is a method for highly multiplexed immuno-fluorescence imaging of formalin-fixed, paraffin-embedded (FFPE) specimens mounted on glass slides. Here we will use [human tonsil data](https://www.synapse.org/#!Synapse:syn17796423) acquired with t-CyCIF method. The acquisition of this data is described in this [paper](https://www.nature.com/articles/s41597-019-0332-y) (Rashid, Rumana, et al, Scientific Data 2019)
@@ -51,7 +51,7 @@ There should be a CSV file containing the channel name information.
 And also a folder containing .tiff images for each channel, where the names should be same as in the CSV file.
 
 ### Segmentation Mask
-This method requires you to provide a cell segmentation mask. A cell nuclei probability matrix can be produced by your own chose (popular options include [ilastik](https://www.ilastik.org/) or [deepcell](https://github.com/vanvalenlab/deepcell-tf)). In our case for the MIBI data we implemented a trained-in-house deepcell CNN model.
+This method requires you to provide a cell segmentation mask. A cell nuclei probability matrix can be produced by your own chose (popular options include [ilastik](https://www.ilastik.org/) or [deepcell](https://github.com/vanvalenlab/deepcell-tf)). In our case for the MIBI data we implemented a trained-in-house deepcell CNN model from DeepCell. 
 
 <p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/feature_1_frame_1_p1_dsDNA.png"></p>
 
