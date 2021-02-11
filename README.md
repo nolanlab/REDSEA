@@ -239,7 +239,7 @@ This process produced a file called ```segmentationParams.mat``` and stored in a
 ### Parameters
 With the ```.tiff``` images, ```.mat``` segmentation file and ```.csv``` channel information, we are now ready to implement REDSEA for boundary compensation.
 
-There are **two methods** for boundary compensation in REDSEA: ```Sudoku``` and ```Cross```. The algorithm walks through the boundaries of each cell, and decides the area to extract signal. You would need to choose one of the two methods and deside how many pixels to expand from the boundary pixel: 
+There are **two methods** for boundary compensation in REDSEA: ```Sudoku``` and ```Cross```. The algorithm walks through the boundaries of each cell, and decides the area to extract signal. You would need to choose one of the two methods and decide how many pixels to expand from the boundary pixel: 
 
 <p align="center"><img width=50%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/method_show.png"></p>
 
