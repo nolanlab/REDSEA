@@ -3,7 +3,7 @@
 <p align="left"><img width=20%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/redsea.jpg"></p>
 
 # REDSEA
-We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDSEA) as a solution for spillover compensation without loss of signal. This is the step-by-step guidance of how to use REDSEA to produce a FCS file with compensated channel signals. This FCS file can then be read for your downstream spatial analysis.
+We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDSEA) as a solution for spillover compensation without loss of signal. This is the step-by-step guidance of how to use REDSEA to produce a FCS file with compensated channel signals. This FCS file can then be read for your downstream spatial analysis. A detailed manuscript that describes the data and method can be found [here](https://www.frontiersin.org/articles/10.3389/fimmu.2021.652631/full).
 
 <p align="center"><img width=40%% src="https://github.com/BokaiZhu/REDSEA/blob/master/media/overview.png"></p>
 
@@ -32,7 +32,7 @@ In brief, the REDSEA algorithm identifies the boundary region for each cell, bas
 Here we provide [example datasets](https://github.com/BokaiZhu/REDSEA/tree/master/code) from two different multiplexed imaging modalities, [MIBI](https://www.nature.com/articles/nm.3488) and [CyCIF](https://elifesciences.org/articles/31657).
 
 ### MIBI data
-Multiplexed Ion Beam Imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use MIBI data generated from non-human primate lymph nodes as part of the REDSEA manuscript [Unpublished](https://github.com/nolanlab/REDSEA/tree/master/MIBI_original/Rhesus%20Macaque%20MIBI%20images%20Figures%201%20and%202).
+Multiplexed Ion Beam Imaging (MIBI) is a method that uses secondary ion mass spectrometry to image antibodies tagged with isotopically pure elemental metal reporters. Here we will use MIBI data generated from non-human primate lymph nodes as part of the REDSEA manuscript [Now Published](https://github.com/nolanlab/REDSEA/tree/master/MIBI_original/Rhesus%20Macaque%20MIBI%20images%20Figures%201%20and%202).
 
 ### CyCIF data
 CyCIF is a method for highly multiplexed immuno-fluorescence imaging of formalin-fixed, paraffin-embedded (FFPE) specimens mounted on glass slides. Here we will use [human tonsil data](https://www.synapse.org/#!Synapse:syn17796423) acquired with t-CyCIF method. The acquisition of this data is described in this [paper](https://www.nature.com/articles/s41597-019-0332-y) (Rashid, Rumana, et al, Scientific Data 2019)
