@@ -9,7 +9,7 @@ We present **RE**inforcement **D**ynamic **S**pillover **E**limin**A**tion (REDS
 
 ### How it works
 
-In brief, the REDSEA algorithm identifies the boundary region for each cell, based on the segmentation mask. Subsequently, for each channel from a single cell, signals were subtracted based on its shared boundary with neighboring cells, and their corresponding signal in the same channel. Moreover, the removed signal from adjacent cells can be reinforced back to the cell. For detailed information look at the Materials and Methods section of the [paper](https://www.biorxiv.org/).
+In brief, the REDSEA algorithm identifies the boundary region for each cell, based on the segmentation mask. Subsequently, for each channel from a single cell, signals were subtracted based on its shared boundary with neighboring cells, and their corresponding signal in the same channel. Moreover, the removed signal from adjacent cells can be reinforced back to the cell. For detailed information look at the Materials and Methods section of the [paper](https://www.frontiersin.org/articles/10.3389/fimmu.2021.652631/full#h5).
 
 ## Table of content
 
